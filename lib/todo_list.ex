@@ -3,6 +3,9 @@ defmodule TodoList do
   一个简单的待办事项列表，我是 Elixir 初学者 xd.
   """
 
+  # 引入 TodoStruct 模块
+  alias TodoStruct
+
   # 用于存储待办事项的状态
   @todo_list :todo_list_agent
 
@@ -20,7 +23,7 @@ defmodule TodoList do
 
   ## Parameters
 
-    - item: 待办事项
+    - title: 待办事项
 
   ## Examples
 
@@ -28,8 +31,8 @@ defmodule TodoList do
       :ok
 
   """
-  def add(item) do
-    Agent.update(@todo_list, fn list -> [item | list] end)
+  def add(title) do
+    Agent.update(@todo_list, fn list -> [TodoStruct.new(title) | list] end)
   end
 
   @spec all() :: any()
@@ -54,7 +57,7 @@ defmodule TodoList do
 
   ## Parameters
 
-    - item: 待办事项
+    - item: 待办事项的标题
 
   ## Examples
 
@@ -62,8 +65,11 @@ defmodule TodoList do
       :ok
 
   """
-  def delete(item) do
-    Agent.update(@todo_list, fn list -> List.delete(list, item) end)
+  def delete(title) do
+    Agent.update(@todo_list, fn list ->
+      # 过滤掉与给定标题匹配的事项
+      Enum.filter(list, fn item -> item.title != title end)
+    end)
   end
 
   @spec delete_all() :: :ok
